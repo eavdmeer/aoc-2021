@@ -1,11 +1,11 @@
 import * as fs from 'fs/promises';
 import makeDebug from 'debug';
 
-const debug = makeDebug('dayxx');
+const debug = makeDebug('day09');
 
 if (process.argv[2])
 {
-  dayxx(process.argv[2]).then(console.log);
+  day09(process.argv[2]).then(console.log);
 }
 
 function basin(map, x, y)
@@ -98,7 +98,7 @@ function solve2(data)
   return basins.slice(0, 3).reduce((a, v) => a * v, 1);
 }
 
-export default async function dayxx(target)
+export default async function day09(target)
 {
   const start = Date.now();
   debug('starting');
@@ -128,5 +128,5 @@ export default async function dayxx(target)
     throw new Error(`Invalid part 2 solution: ${part2}. Expecting; 1134`);
   }
 
-  return { day: -1, part1, part2, duration: Date.now() - start };
+  return { day: 9, part1, part2, duration: Date.now() - start };
 }
