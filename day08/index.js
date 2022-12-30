@@ -1,55 +1,12 @@
-const fs = require('fs');
+import * as fs from 'fs/promises';
+import makeDebug from 'debug';
 
-/*
-  0:      1:      2:      3:      4:
- aaaa    ....    aaaa    aaaa    ....
-b    c  .    c  .    c  .    c  b    c
-b    c  .    c  .    c  .    c  b    c
- ....    ....    dddd    dddd    dddd
-e    f  .    f  e    .  .    f  .    f
-e    f  .    f  e    .  .    f  .    f
- gggg    ....    gggg    gggg    ....
+const debug = makeDebug('day08');
 
-  5:      6:      7:      8:      9:
- aaaa    aaaa    aaaa    aaaa    aaaa
-b    .  b    .  .    c  b    c  b    c
-b    .  b    .  .    c  b    c  b    c
- dddd    dddd    ....    dddd    dddd
-.    f  e    f  .    f  e    f  .    f
-.    f  e    f  .    f  e    f  .    f
- gggg    gggg    ....    gggg    gggg
-
-const segment = {
-  0: { on: 'abcefg', off: 'd' },
-  1: { on: 'cf', off: 'abdeg' },
-  2: { on: 'acdeg', off: 'bf' },
-  3: { on: 'acdfg', off: 'be' },
-  4: { on: 'bcdf', off: 'aeg' },
-  5: { on: 'abdfg', off: 'ce' },
-  6: { on: 'abdefg', off: 'c' },
-  7: { on: 'acf', off: 'bdeg' },
-  8: { on: 'abcdefg', off: '' },
-  9: { on: 'abcdfg' off: 'e' }
-};
-
-const segment = {
-  cf: 1,
-  acf: 7,
-  bcdf: 4,
-  abcdefg: 8
-
-5 digits
-  2: 'acdeg',
-  3: 'acdfg',
-  5: 'abdfg',
-
-6 digits
-  0: 'abcefg',
-  6: 'abdefg',
-  9: 'abcdfg'
-};
-
-*/
+if (process.argv[2])
+{
+  day08(process.argv[2]).then(console.log);
+}
 
 function intersection(array1, array2)
 {
@@ -153,59 +110,49 @@ function decode(input, output)
   return parseInt(digits.join(''), 10);
 }
 
-function solve(filename, callback)
+function solve1(data)
 {
-  fs.readFile(filename, (err, content) =>
-  {
-    if (err)
-    {
-      callback(err);
-      return;
-    }
-    const data = content
-      .toString()
-      .trim()
-      .split(/\n/)
-      .map(line => line
-        .split(/\s+/)
-        .filter(v => v !== '|'))
-      .map(v => ({ input: v.slice(0, 10), output: v.slice(10, 14) }));
-
-    // Sanity check on the data
-    if (data.some(line =>
-      line.input.some(v => ! /^[a-g]+$/.test(v)) ||
-      line.output.some(v => ! /^[a-g]+$/.test(v)) ||
-      line.input.length !== 10 ||
-      line.output.length !== 4))
-    {
-      callback(new Error('Error reading data!'));
-      return;
-    }
-
-    callback(null, data.reduce((a, v) => a + decode(v.input, v.output), 0));
-  });
+  return data.reduce((a, line) =>
+    a + line.output.filter(v =>
+      [ 2, 3, 4, 7 ].includes(v.length)).length, 0);
 }
 
-solve('test8.txt', (err, answer) =>
+function solve2(data)
 {
-  if (err)
+  return data.reduce((a, v) => a + decode(v.input, v.output), 0);
+}
+
+export default async function day08(target)
+{
+  const start = Date.now();
+  debug('starting');
+
+  const buffer = await fs.readFile(target);
+
+  /* eslint-disable no-shadow */
+  const data = buffer
+    .toString()
+    .trim()
+    .split(/\n/)
+    .map(line => line
+      .split(/\s+/)
+      .filter(v => v !== '|'))
+    .map(v => ({ input: v.slice(0, 10), output: v.slice(10, 14) }));
+  /* eslint-enable no-shadow */
+
+  debug('data', data);
+
+  const part1 = solve1(data);
+  if (target.includes('example') && part1 !== 26)
   {
-    throw err;
-  }
-  if (answer !== 61229)
-  {
-    console.error(`Test case failed! (${answer})`);
-    return;
+    throw new Error(`Invalid part 1 solution: ${part1}. Expecting; 26`);
   }
 
-  console.log('Test case succeded');
-
-  solve('input8.txt', (err, answer2) =>
+  const part2 = solve2(data);
+  if (target.includes('example') && part2 !== 61229)
   {
-    if (err)
-    {
-      throw err;
-    }
-    console.log('sum of all outputs:', answer2);
-  });
-});
+    throw new Error(`Invalid part 2 solution: ${part2}. Expecting; 61229`);
+  }
+
+  return { day: 8, part1, part2, duration: Date.now() - start };
+}
