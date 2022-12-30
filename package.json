@@ -1,0 +1,32 @@
+{
+  "name": "aoc-2021",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "This small repo contains my NodeJS solutions to the Advent of Code challenge of 2021.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eavdmeer/aoc-2021.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eavdmeer/aoc-2021/issues"
+  },
+  "homepage": "https://github.com/eavdmeer/aoc-2021#readme",
+  "dependencies": {
+    "@datastructures-js/priority-queue": "^6.1.4",
+    "debug": "^4.3.4",
+    "linear-solve": "^1.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.30.0",
+    "eslint-plugin-jest": "^27.1.7",
+    "jest": "^29.3.1"
+  }
+}

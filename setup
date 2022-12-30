@@ -1,0 +1,30 @@
+#!/bin/bash
+
+today=$(date +%d)
+day="${1-$today}"
+here="${0%/*}"
+
+[ -n "$day" ] || {
+  echo >&2 "Usage: ${0##*/} day"
+  exit 1
+}
+day=${day/day/}
+target="day$day"
+
+[ ! -d "$target" ] || {
+  echo "Directory $target is already there."
+  exit 0
+}
+echo "Setting up for day $day..."
+
+mkdir -p "$target" || exit 1
+
+sarg="s/dayxx/day$day/; s/day: -1/day: $day/"
+sed "$sarg" "$here/skel/index.js" > "$target/index.js"
+touch "$target/example.txt" "$target/data.txt"
+
+git add "$target/index.js" "$target/example.txt" "$target/data.txt"
+
+cd "$target" || exit 1
+gvim example.txt data.txt
+gvim index.js
