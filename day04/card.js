@@ -8,7 +8,7 @@ function Card(rows)
 Card.prototype.transpose = function(rows)
 {
   const [ row ] = rows;
-  return row.map((value, column) => rows.map(row => row[column]));
+  return row.map((value, column) => rows.map(r => r[column]));
 };
 Card.prototype.place = function(number)
 {
@@ -18,8 +18,8 @@ Card.prototype.place = function(number)
   this.colMatches.forEach((r, i) =>
     this.colMatches[i] = r.filter(v => v !== number));
 
-  return this.rowMatches.some(v => v.length == 0) ||
-    this.colMatches.some(v => v.length == 0);
+  return this.rowMatches.some(v => v.length === 0) ||
+    this.colMatches.some(v => v.length === 0);
 };
 Card.prototype.score = function()
 {
@@ -31,4 +31,4 @@ Card.prototype.has = function(number)
   return this.rows.some(r => r.includes(number));
 };
 
-module.exports = Card;
+export default Card;
