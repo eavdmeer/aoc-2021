@@ -19,4 +19,4 @@ LanternFish.prototype.liveOneDay = function()
   return null;
 };
 
-module.exports = LanternFish;
+export default LanternFish;
