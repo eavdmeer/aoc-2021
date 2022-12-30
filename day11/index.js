@@ -69,13 +69,13 @@ function solve1(data)
   return flashes;
 }
 
-function solve2(data)
+function solve2(content)
 {
-  // Sanity check on the data
-  if (data.some(v => v.some(d => isNaN(d))))
-  {
-    throw new Error('Error reading data!');
-  }
+  const data = content
+    .toString()
+    .trim()
+    .split(/\n/)
+    .map(v => v.split('').map(i => parseInt(i, 10)));
 
   let steps = 0;
   const maxSteps = 100000;
@@ -138,6 +138,7 @@ function solve2(data)
   return steps;
 }
 
+
 export default async function day11(target)
 {
   const start = Date.now();
@@ -162,8 +163,8 @@ export default async function day11(target)
     throw new Error(`Invalid part 1 solution: ${part1}. Expecting; 1656`);
   }
 
-  const part2 = solve2(data);
-  if (target.includes('example') && part2 !== 195)
+  const part2 = solve2(buffer);
+  if (target.includes('example') && part2 !== 195 && part2 !== 'todo')
   {
     throw new Error(`Invalid part 2 solution: ${part2}. Expecting; 195`);
   }
