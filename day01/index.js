@@ -1,11 +1,11 @@
 import * as fs from 'fs/promises';
 import makeDebug from 'debug';
 
-const debug = makeDebug('dayxx');
+const debug = makeDebug('day01');
 
 if (process.argv[2])
 {
-  dayxx(process.argv[2]).then(console.log);
+  day01(process.argv[2]).then(console.log);
 }
 
 function countIncreases(data)
@@ -43,7 +43,7 @@ function solve2(data)
   return countIncreases(window(data, 3));
 }
 
-export default async function dayxx(target)
+export default async function day01(target)
 {
   const start = Date.now();
   debug('starting');
