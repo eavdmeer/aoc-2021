@@ -1,11 +1,11 @@
-const fs = require('fs');
-const process = require('process');
+import * as fs from 'fs/promises';
+import makeDebug from 'debug';
 
-const doDebug = process.argv.includes('-d');
+const debug = makeDebug('day15');
 
-function debug(...args)
+if (process.argv[2])
 {
-  if (doDebug) { console.log(...args); }
+  day15(process.argv[2]).then(console.log);
 }
 
 // Optimistic estimate of the total risk from (x,y) to the bottom right,
@@ -44,7 +44,7 @@ function getPathRisk(data, r)
   const open = {
     '0,0': [ 0, estimate(data, 0, 0, 0) ]
   };
-  // keep track of closed paths who's neighbors have been investigated
+  // keep track of closed paths whos neighbors have been investigated
   const closed = {};
 
   // repeat until we've reached the bottom right
@@ -94,62 +94,49 @@ function getPathRisk(data, r)
   return closed[`${data.width * r - 1},${data.height * r - 1}`][0];
 }
 
-function solve(filename, callback)
+function solve1(data)
 {
-  fs.readFile(filename, (err, content) =>
-  {
-    if (err)
-    {
-      callback(err);
-      return;
-    }
-
-    const data = content
-      .toString()
-      .trim()
-      .split(/\n/)
-      .map(v => v.split('').map(c => parseInt(c, 10)));
-
-    // Sanity check on the data
-    if (data.some(row => row.some(col => isNaN(col))))
-    {
-      callback(new Error('Error reading data!'));
-      return;
-    }
-
-    // Insert width and height property for convenience
-    data.width = data[0].length;
-    data.height = data.length;
-    debug(data);
-
-    callback(null, { one: getPathRisk(data, 1),
-      two: getPathRisk(data, 5) });
-  });
+  return getPathRisk(data, 1);
 }
 
-solve('test15.txt', (err, answer) =>
+function solve2(data)
 {
-  if (err)
+  return getPathRisk(data, 5);
+}
+
+export default async function day15(target)
+{
+  const start = Date.now();
+  debug('starting');
+
+  const buffer = await fs.readFile(target);
+
+  /* eslint-disable no-shadow */
+  const data = buffer
+    .toString()
+    .trim()
+    .split(/\s*\n\s*/)
+    .filter(v => v)
+    .map(v => v.split('').map(c => parseInt(c, 10)));
+  /* eslint-enable no-shadow */
+
+  // Insert width and height property for convenience
+  data.width = data[0].length;
+  data.height = data.length;
+
+  debug('data', data);
+
+  const part1 = solve1(data);
+  if (target.includes('example') && part1 !== 40)
   {
-    throw err;
+    throw new Error(`Invalid part 1 solution: ${part1}. Expecting; 40`);
   }
 
-  if (answer.one === 40 && answer.two === 315)
+  const part2 = solve2(data);
+  if (target.includes('example') && part2 !== 315)
   {
-    console.log('Test case succeeded');
-  }
-  else
-  {
-    console.error(`Test case failed (${answer})!`);
-    return;
+    throw new Error(`Invalid part 2 solution: ${part2}. Expecting; 315`);
   }
 
-  solve('input15.txt', (err, answer2) =>
-  {
-    if (err)
-    {
-      throw err;
-    }
-    console.log('lowest path cost:', answer2);
-  });
-});
+  return { day: 15, part1, part2, duration: Date.now() - start };
+}
